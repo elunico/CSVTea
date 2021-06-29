@@ -44,6 +44,9 @@ class CellParser(abc.ABC):
 
 
 class PlainCellParser(CellParser):
+    """
+    Parses cells that contain no special characters and are not quoted.
+    """
     def parser_hook(self, text: str) -> tuple[str, int, bool]:
         def index(string: str, pattern: str, start: Optional[int] = 0):
             try:
@@ -64,6 +67,10 @@ class PlainCellParser(CellParser):
 
 
 class QuotedCellParser(CellParser):
+    """
+    Parses cells that are quoted by double quotes and can contain special characters including new line but NOT including
+    additional double quotes
+    """
     def parser_hook(self, text: str) -> tuple[str, int, bool]:
         quoted_cell = re.compile(r'"(.+?)"([,\n\x00])', re.DOTALL | re.MULTILINE)
         value = quoted_cell.match(text)
@@ -78,7 +85,8 @@ class QuotedCellParser(CellParser):
 
 class DefaultCellParser(QuotedCellParser, PlainCellParser):
     """
-    Default parser for the CSVParser class
+    Default parser for the CSVParser class: can parse either quoted or plain cells depending on the first character of
+    the text that is passed. 
     """
 
     def parser_hook(self, text: str) -> tuple[str, int, bool]:

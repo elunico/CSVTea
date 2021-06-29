@@ -19,9 +19,9 @@ class CSVParser:
         while text:
             cell, cell_end, row_done = self.parser.parse(text)
             cell = self.formatter.format(cell)
-            text = text[cell_end:]
             row.append(cell)
             if row_done:
                 cells.append(row)
                 row = []
+            text = text[cell_end:]
         return cells
