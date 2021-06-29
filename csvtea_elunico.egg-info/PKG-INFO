@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: csvtea-elunico
-Version: 0.1.0
+Version: 0.2.0
 Summary: A flexible, extensible, pluggable, slightly-out-of-spec CSV parser
 Home-page: https://github.com/elunico/CSVTea
 Author: Thomas Povinelli
@@ -13,6 +13,10 @@ Description: # CSV Tea
         
         Contributions & Suggestions welcome.
         
+        
+        ## PyPi 
+        
+        This package can be found on PyPi [here](https://pypi.org/project/csvtea-elunico/0.1.0/)
 Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
