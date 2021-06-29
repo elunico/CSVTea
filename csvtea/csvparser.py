@@ -1,7 +1,7 @@
 from typing import TextIO
 
-from cells import DefaultCellParser, CellParser
-from format import DefaultCellFormatter, CellFormatter
+from csvtea.cells import CellParser, DefaultCellParser
+from csvtea.format import DefaultCellFormatter, CellFormatter
 
 
 class CSVParser:
