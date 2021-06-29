@@ -3,6 +3,10 @@ import re
 from typing import Optional
 
 
+class ParseError(ValueError):
+    pass
+
+
 class CellParser(abc.ABC):
     """
     A class that can take a string and parse out the CSV cells in the string. String should begin with the first CSV
@@ -47,6 +51,7 @@ class PlainCellParser(CellParser):
     """
     Parses cells that contain no special characters and are not quoted.
     """
+
     def parser_hook(self, text: str) -> tuple[str, int, bool]:
         def index(string: str, pattern: str, start: Optional[int] = 0):
             try:
@@ -69,13 +74,14 @@ class PlainCellParser(CellParser):
 class QuotedCellParser(CellParser):
     """
     Parses cells that are quoted by double quotes and can contain special characters including new line but NOT including
-    additional double quotes
+    additional double quotes. Empty quoted cells are also allowed
     """
+
     def parser_hook(self, text: str) -> tuple[str, int, bool]:
-        quoted_cell = re.compile(r'"(.+?)"([,\n\x00])', re.DOTALL | re.MULTILINE)
+        quoted_cell = re.compile(r'"(.*?)"([,\n\x00])', re.DOTALL | re.MULTILINE)
         value = quoted_cell.match(text)
         if value is None:
-            raise ValueError("Cannot match quoted text in string starting at {}".format(0))
+            raise ParseError("Cannot match quoted text in string starting at {}".format(0))
 
         content = value.group(1)
         end_index = value.span()[1]

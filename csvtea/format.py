@@ -19,6 +19,9 @@ class CellFormatter(abc.ABC):
         this class is not required, but it is recommended
 
         :param content: the content of the CSV text parsed by the CSVParser
+        :raises ParseError: if the method cannot parse the content string. If CSVParser sets self.debug to True,
+                    then this error is caught and a new error with more information is raised `from` this error.
+                    Otherwise, this error is raised unchanged
         :returns: the result of formatting the text
         """
         pass
