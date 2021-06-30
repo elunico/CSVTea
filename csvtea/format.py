@@ -1,5 +1,5 @@
 import abc
-from typing import Any
+from typing import Any, Optional
 
 
 class CellFormatter(abc.ABC):
@@ -40,11 +40,19 @@ class CleanedCellFormatter(CellFormatter):
     """
     Removes whitespace other than a plain space and double quotes from the content of a CSV text. Since newlines
     are supported inside of double quoted cells by the CSVParser, this will remove them among other the other things
-    listed.
+    listed. This can be changed by passing a list of strings to be removed to the __init__ of this class when creating it
+    all instances of all the strings in the list passed to __init__ will be removed from the cell's content
     """
+
+    def __init__(self, disallowed_strings: Optional[list[str]] = None):
+        if disallowed_strings is None:
+            disallowed_strings = ['\r', '\n', '\t', '"']
+        self.disallowed_strings = disallowed_strings
 
     def format(self, content: str) -> str:
         def cleaned(s: str) -> str:
-            return s.replace('\r', '').replace('\n', '').replace('\t', '').replace('"', '')
+            for string in self.disallowed_strings:
+                s = s.replace(string, '')
+            return s
 
         return cleaned(content)
