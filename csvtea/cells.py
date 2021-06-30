@@ -76,9 +76,13 @@ class QuotedCellParser(CellParser):
     Parses cells that are quoted by double quotes and can contain special characters including new line but NOT including
     additional double quotes. Empty quoted cells are also allowed
     """
+    def __init__(self, allow_empty: bool = True):
+        self.allow_empty = allow_empty
+        super(QuotedCellParser, self).__init__()
 
     def parser_hook(self, text: str) -> tuple[str, int, bool]:
-        quoted_cell = re.compile(r'"(.*?)"([,\n\x00])', re.DOTALL | re.MULTILINE)
+        pattern = r'"(.*?)"([,\n\x00])' if self.allow_empty else r'"(.+?)"([,\n\x00])'
+        quoted_cell = re.compile(pattern, re.DOTALL | re.MULTILINE)
         value = quoted_cell.match(text)
         if value is None:
             raise ParseError("Cannot match quoted text in string starting at {}".format(0))
@@ -94,6 +98,10 @@ class DefaultCellParser(QuotedCellParser, PlainCellParser):
     Default parser for the CSVParser class: can parse either quoted or plain cells depending on the first character of
     the text that is passed. 
     """
+
+    def __init__(self, allow_empty: bool = True):
+        PlainCellParser.__init__(self)
+        QuotedCellParser.__init__(self, allow_empty)
 
     def parser_hook(self, text: str) -> tuple[str, int, bool]:
         if text[0] == '"':

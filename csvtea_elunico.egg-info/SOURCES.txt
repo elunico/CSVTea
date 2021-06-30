@@ -3,6 +3,7 @@ README.md
 pyproject.toml
 setup.py
 csvtea/__init__.py
+csvtea/adapter.py
 csvtea/cells.py
 csvtea/csvparser.py
 csvtea/format.py
