@@ -1,5 +1,5 @@
 import abc
-from typing import Any, Optional
+from typing import Any, Optional, Callable
 
 
 class CellFormatter(abc.ABC):
@@ -56,3 +56,12 @@ class CleanedCellFormatter(CellFormatter):
             return s
 
         return cleaned(content)
+
+
+class ClearInvalidCellFormatter(CellFormatter):
+    def __init__(self, is_valid: Callable[[str], bool]):
+        self.is_valid = is_valid
+        super(ClearInvalidCellFormatter, self).__init__()
+
+    def format(self, content: str) -> str:
+        return content if self.is_valid(content) else ''

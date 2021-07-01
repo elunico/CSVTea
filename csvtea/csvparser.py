@@ -1,23 +1,34 @@
-from typing import TextIO
+from typing import TextIO, Optional, Union
 
 from csvtea.cells import CellParser, DefaultCellParser, ParseError
 from csvtea.format import DefaultCellFormatter, CellFormatter
 
 
 class CSVParser:
+    @classmethod
+    def fromfile(cls, file: TextIO, parser: CellParser = DefaultCellParser(),
+                 formatter: CellFormatter = DefaultCellFormatter(), *, debug: bool = False):
+        return cls(file.read().strip('\r\n') + '\0', parser, formatter, debug=debug)
+
+    @classmethod
+    def from_filename(cls, filename: str, parser: CellParser = DefaultCellParser(),
+                      formatter: CellFormatter = DefaultCellFormatter(), *, debug: bool = False):
+        with open(filename) as f:
+            return cls.fromfile(f, parser, formatter, debug=debug)
+
     def __init__(
             self,
-            file: TextIO,
+            string: str,
             parser: CellParser = DefaultCellParser(),
-            formatter: CellFormatter = DefaultCellFormatter(),
+            formatter: Union[CellFormatter, list[CellFormatter]] = DefaultCellFormatter(),
             *,
             debug: bool = False
     ):
         self.parser = parser
-        self.formatter = formatter
+        self.formatters = list(formatter) if isinstance(formatter, (tuple, list)) else [formatter]
         self.debug = debug
 
-        self.text = file.read().strip('\r\n') + '\0'
+        self.text = string
 
     def parse(self) -> list[list[str]]:
         cells = []
@@ -34,7 +45,8 @@ class CSVParser:
                     raise error from e
                 else:
                     raise
-            cell = self.formatter.format(cell)
+            for formatter in self.formatters:
+                cell = formatter.format(cell)
             row.append(cell)
             if row_done:
                 cells.append(row)
