@@ -59,6 +59,11 @@ class CleanedCellFormatter(CellFormatter):
 
 
 class ClearInvalidCellFormatter(CellFormatter):
+    """
+    Clears the content of all cells which do not meet a certain criteria. The is_valid parameter is the predicate
+    which determines what content is valid. If is_valid returns False the content of the cell is cleared but the cell
+    and column are not deleted. If is_valid returns True the content of a cell is unchanged
+    """
     def __init__(self, is_valid: Callable[[str], bool]):
         self.is_valid = is_valid
         super(ClearInvalidCellFormatter, self).__init__()
