@@ -209,7 +209,7 @@ class CSVTable:
 
         self._headers.insert(index, name)
         for row in self._rows:
-            row.insert(index, name)
+            row.insert(index, default_value)
         return self
 
     def create_column(self, name: str, default_value: Optional[str] = '') -> 'CSVTable':

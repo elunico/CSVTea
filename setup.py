@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="csvtea-elunico",
-    version="3.0.0",
+    version="3.0.1",
     author="Thomas Povinelli",
     author_email="author@example.com",
     description="A flexible, extensible, pluggable, slightly-out-of-spec CSV parser",
