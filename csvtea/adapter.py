@@ -1,5 +1,5 @@
 import abc
-from typing import TypeVar, Optional, TextIO, Union, Callable, Any, Iterable
+from typing import TypeVar, Optional, TextIO, Union, Callable, Any, Iterable, overload
 
 
 class OutputAdapter(abc.ABC):
@@ -130,6 +130,26 @@ class CSVTable:
         except IndexError:
             return None
 
+    @overload
+    def __getitem__(self, column: str) -> list[str]:
+        """
+        Return an entire column of data. Returns the value in the cells for each row in the column specified by name
+        in `column`
+        :param column: name of the columns whos row values to retrieve
+        :return: a list of cell values in each row for the given column
+        """
+        pass
+
+    @overload
+    def __getitem__(self, column: str, row: int) -> str:
+        """
+        Return the value the cell in column named `column` and in row at index `row`
+        :param column: the name of the column to look in
+        :param row: the index of the row to look in
+        :return: the value of the cell at the column and row given
+        """
+        pass
+
     def __getitem__(self, column: str, row: Optional[int] = None) -> Union[list[str], str]:
         """
         Return data from the table. If row is None, then return an ordered list of all the values in every row
@@ -161,6 +181,36 @@ class CSVTable:
         if name is None:
             raise IndexError("No such column {} ".format(column))
         self._rows[row][name] = value
+
+    def copy(self) -> 'CSVTable':
+        """
+        Return a copy of the CSVTable and its associated data. Since most of the methods on this class are mutating,
+        if you want to process the table in 2 different ways you will need to make a copy first
+        :return: a copy of this table and its data
+        """
+        return CSVTable([i[:] for i in self.unwrap()])
+
+    def create_column_before(self, existing_column: str, name: str, default_value: Optional[str] = '') -> 'CSVTable':
+        """
+        Create a new column and insert it into the table before the column specified by the name in `existing_column`
+        You can insert the column before any existing column; to insert at the end of the table use the `create_column`
+        method (see below).
+
+        The row is filled with `default_value` upon column creation
+
+        :param existing_column: the name of the column to insert the new column before
+        :param name: the name of the new column to be inserted
+        :param default_value: the value to fill the rows of the new column with
+        :return: self 
+        """
+        index = self.index_for_name(existing_column)
+        if index is None:
+            raise ValueError('No such column {} to inser before'.format(existing_column))
+
+        self._headers.insert(index, name)
+        for row in self._rows:
+            row.insert(index, name)
+        return self
 
     def create_column(self, name: str, default_value: Optional[str] = '') -> 'CSVTable':
         """
