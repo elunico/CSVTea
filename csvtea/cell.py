@@ -76,12 +76,24 @@ class QuotedCellParser(CellParser):
     Parses cells that are quoted by double quotes and can contain special characters including new line but NOT including
     additional double quotes. Empty quoted cells are also allowed
     """
-    def __init__(self, allow_empty: bool = True):
+
+    def __init__(
+            self, *,
+            cell_sep: str = ',',
+            row_sep: str = '\n',
+            quote_char: str = '"',
+            allow_empty: bool = True
+    ):
+        self.row_sep = row_sep
+        self.cell_sep = cell_sep
+        self.quote_char = quote_char
         self.allow_empty = allow_empty
         super(QuotedCellParser, self).__init__()
 
     def parser_hook(self, text: str) -> tuple[str, int, bool]:
-        pattern = r'"(.*?)"([,\n\x00])' if self.allow_empty else r'"(.+?)"([,\n\x00])'
+        metachar = "*" if self.allow_empty else "+"
+        pattern = fr'{self.quote_char}(.{metachar}?){self.quote_char}([{self.cell_sep}{self.row_sep}{chr(0)}])'
+        print(re.compile(pattern))
         quoted_cell = re.compile(pattern, re.DOTALL | re.MULTILINE)
         value = quoted_cell.match(text)
         if value is None:
@@ -99,12 +111,19 @@ class DefaultCellParser(QuotedCellParser, PlainCellParser):
     the text that is passed. 
     """
 
-    def __init__(self, allow_empty: bool = True):
+    def __init__(
+            self, *,
+            cell_sep: str = ',',
+            row_sep: str = '\n',
+            quote_char: str = '"',
+            allow_empty: bool = True
+    ):
         PlainCellParser.__init__(self)
-        QuotedCellParser.__init__(self, allow_empty)
+        QuotedCellParser.__init__(self, cell_sep=cell_sep, row_sep=row_sep, quote_char=quote_char,
+                                  allow_empty=allow_empty)
 
     def parser_hook(self, text: str) -> tuple[str, int, bool]:
-        if text[0] == '"':
+        if text[0] == self.quote_char:
             return QuotedCellParser.parser_hook(self, text)
         else:
             return PlainCellParser.parser_hook(self, text)

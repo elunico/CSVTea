@@ -1,13 +1,13 @@
 from typing import TextIO, Optional, Union
 
-from csvtea.cells import CellParser, DefaultCellParser, ParseError
+from csvtea.cell import CellParser, DefaultCellParser, ParseError
 from csvtea.format import DefaultCellFormatter, CellFormatter
 
 
 class CSVParser:
     """
     Main class for parsing CSV Files. Allows pluggable behavior by letting the user inject a custom parser (see
-    CellParser in the cells module) and a custom formatter (see formatter in the format module). These change the way
+    CellParser in the cell module) and a custom formatter (see formatter in the format module). These change the way
     the text of the CSV is parsed and the values that are stored in the cells (respectively) allowing you to adapt
     this to--for one example--parse a tab separated file and convert None's to nulls, regularize capitalization, etc.
 
@@ -24,7 +24,7 @@ class CSVParser:
         """
         Create a parser from a file. note that the parsing, and resulting data is not available until parse() is called
         :param file: file object that can read the CSV
-        :param parser: the CellParser object to parse with (see cells module)
+        :param parser: the CellParser object to parse with (see cell module)
         :param formatter: the CellFormatter object to format parsed cells with (see format module)
         :param debug: when debug is True, MUCH more verbose errors are produced
         :return: initialized instance
@@ -38,7 +38,7 @@ class CSVParser:
         The same as CSVParser.fromfile() but will safely open the file with `filename` for reading before calling
         fromfile(). note that the parsing, and resulting data is not available until parse() is called
         :param filename: filename to open, read, and parse
-        :param parser: the CellParser object to parse with (see cells module)
+        :param parser: the CellParser object to parse with (see cell module)
         :param formatter: the CellFormatter object to format parsed cells with (see format module)
         :param debug: when debug is True, MUCH more verbose errors are produced
         :return: initialized instance
@@ -57,7 +57,7 @@ class CSVParser:
         """
         create a parser from a string. note that the parsing, and resulting data is not available until parse() is called
         :param string: string to parse
-        :param parser: the CellParser object to parse with (see cells module)
+        :param parser: the CellParser object to parse with (see cell module)
         :param formatter: the CellFormatter object to format parsed cells with (see format module)
         :param debug: when debug is True, MUCH more verbose errors are produced
         :return: initialized instance
