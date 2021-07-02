@@ -93,7 +93,6 @@ class QuotedCellParser(CellParser):
     def parser_hook(self, text: str) -> tuple[str, int, bool]:
         metachar = "*" if self.allow_empty else "+"
         pattern = fr'{self.quote_char}(.{metachar}?){self.quote_char}([{self.cell_sep}{self.row_sep}{chr(0)}])'
-        print(re.compile(pattern))
         quoted_cell = re.compile(pattern, re.DOTALL | re.MULTILINE)
         value = quoted_cell.match(text)
         if value is None:
