@@ -201,7 +201,7 @@ class CSVTable:
         :param existing_column: the name of the column to insert the new column before
         :param name: the name of the new column to be inserted
         :param default_value: the value to fill the rows of the new column with
-        :return: self 
+        :return: self
         """
         index = self.index_for_name(existing_column)
         if index is None:
